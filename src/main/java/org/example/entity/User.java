@@ -4,11 +4,13 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @Table(name = "users")
 @Getter
 @Setter
+@ToString
 @NoArgsConstructor
 public class User {
 
@@ -29,5 +31,7 @@ public class User {
     @Column(name = "department", nullable = false)
     private String department;
 
+    @OneToOne(mappedBy = "user")
+    private Booking booking;
 
 }

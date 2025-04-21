@@ -4,11 +4,15 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
+
+import java.util.Set;
 
 @Entity
 @Table(name = "rooms")
 @Getter
 @Setter
+@ToString
 @NoArgsConstructor
 public class Room {
 
@@ -22,4 +26,8 @@ public class Room {
 
     @Column(name = "location", nullable = false, unique = true)
     private String location;
+
+    @OneToMany(mappedBy = "room")
+    @ToString.Exclude
+    private Set<Booking> bookings;
 }
