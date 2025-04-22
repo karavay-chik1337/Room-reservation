@@ -12,7 +12,6 @@ import java.util.Set;
 @Table(name = "rooms")
 @Getter
 @Setter
-@ToString
 @NoArgsConstructor
 public class Room {
 
@@ -28,6 +27,5 @@ public class Room {
     private String location;
 
     @OneToMany(mappedBy = "room")
-    @ToString.Exclude
     private Set<Booking> bookings;
 }
