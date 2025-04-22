@@ -4,8 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -23,9 +23,9 @@ public class Room {
     @Column(name = "name", nullable = false, unique = true)
     private String name;
 
-    @Column(name = "location", nullable = false, unique = true)
+    @Column(name = "location", nullable = false)
     private String location;
 
     @OneToMany(mappedBy = "room")
-    private Set<Booking> bookings;
+    private Set<Booking> bookings = new HashSet<>();
 }

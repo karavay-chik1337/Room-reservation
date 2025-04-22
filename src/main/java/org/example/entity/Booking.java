@@ -1,7 +1,10 @@
 package org.example.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
@@ -17,10 +20,12 @@ public class Booking {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @EqualsAndHashCode.Exclude
     @ManyToOne
     @JoinColumn(name = "room_id", referencedColumnName = "room_id", nullable = false)
     private Room room;
 
+    @EqualsAndHashCode.Exclude
     @OneToOne
     @JoinColumn(name = "user_id", referencedColumnName = "user_id", unique = true, nullable = false)
     private User user;
