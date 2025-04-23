@@ -13,6 +13,7 @@ public interface BookingMapper {
     @Mapping(target = "userId", expression = "java(booking.getUser().getId())")
     @Mapping(target = "roomId", expression = "java(booking.getRoom().getId())")
     BookingOuterDTO toOuterDTO(Booking booking);
+
     List<BookingOuterDTO> toOuterDTO(List<Booking> bookings);
 
 }

@@ -17,15 +17,11 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserMapper mapper;
 
-    public UserOuterDTO createUser(UserInnerDTO userInnerDTO){
-        if(userRepository.existsUserByEmail(userInnerDTO.email()))
-            throw new RuntimeException("Пользователь с почтой: \"%s\" уже существует".formatted(userInnerDTO.email()));
-        User newUser = mapper.toEntity(userInnerDTO);
+    public UserOuterDTO create(UserInnerDTO innerDTO){
+        if(userRepository.existsUserByEmail(innerDTO.email()))
+            throw new RuntimeException("Пользователь с почтой: \"%s\" уже существует".formatted(innerDTO.email()));
+        User newUser = mapper.toEntity(innerDTO);
         return mapper.toOuterDTO(userRepository.save(newUser));
-    }
-
-    public void deleteById(int id) {
-        userRepository.deleteById(id);
     }
 
     public UserOuterDTO findById(int id){
@@ -35,6 +31,19 @@ public class UserService {
 
     public List<UserOuterDTO> findAll() {
         return mapper.toOuterDTO(userRepository.findAll());
+    }
+
+    public UserOuterDTO update(int id, UserInnerDTO innerDTO){
+        if(userRepository.existsUserByEmail(innerDTO.email()))
+            throw new RuntimeException("Пользователь с почтой: \"%s\" уже существует".formatted(innerDTO.email()));
+        User updateUser = userRepository.findById(id).orElseThrow(() ->
+                new RuntimeException("Пользователя с id: %s не существует".formatted(id)));
+        mapper.updateUser(innerDTO, updateUser);
+        return mapper.toOuterDTO(userRepository.save(updateUser));
+    }
+
+    public void deleteById(int id) {
+        userRepository.deleteById(id);
     }
 
 }
