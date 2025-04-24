@@ -27,12 +27,12 @@ public class BookingService {
 
     public BookingOuterDTO create(BookingInnerDTO bookingInnerDTO) {
         if (bookingRepository.existsBookingByUserId(bookingInnerDTO.userId())) {
-            throw new RuntimeException("У пользователя с id: %s уже есть бронь".formatted(bookingInnerDTO.userId()));
+            throw new IllegalArgumentException("У пользователя с id: %s уже есть бронь".formatted(bookingInnerDTO.userId()));
         }
         User user = userRepository.findById(bookingInnerDTO.userId())
-                .orElseThrow(() -> new RuntimeException("Пользователя с id: %s не существует".formatted(bookingInnerDTO.userId())));
+                .orElseThrow(() -> new IllegalArgumentException("Пользователя с id: %s не существует".formatted(bookingInnerDTO.userId())));
         Room room = roomRepository.findById(bookingInnerDTO.roomId())
-                .orElseThrow(() -> new RuntimeException("Комнаты с id: %s не существует".formatted(bookingInnerDTO.roomId())));
+                .orElseThrow(() -> new IllegalArgumentException("Комнаты с id: %s не существует".formatted(bookingInnerDTO.roomId())));
 
         LocalDateTime newStart = bookingInnerDTO.startTime();
         LocalDateTime newEnd = bookingInnerDTO.endTime();
@@ -44,7 +44,7 @@ public class BookingService {
         );
 
         if (isBusy) {
-            throw new RuntimeException("На указанный период [%s - %s] уже есть бронь для комнаты с id: %s"
+            throw new IllegalArgumentException("На указанный период [%s - %s] уже есть бронь для комнаты с id: %s"
                     .formatted(newStart, newEnd, room.getId()));
         }
 
@@ -59,7 +59,7 @@ public class BookingService {
 
     public BookingOuterDTO findById(int id) {
         return mapper.toOuterDTO(bookingRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Брони с id: %s нет")));
+                .orElseThrow(() -> new IllegalArgumentException("Брони с id: %s нет")));
     }
 
     public List<BookingOuterDTO> findAll() {
@@ -72,14 +72,13 @@ public class BookingService {
 
     public BookingOuterDTO findByUserId(int userId) {
         return mapper.toOuterDTO(bookingRepository.findBookingByUserId(userId)
-                .orElseThrow(() -> new RuntimeException("Пользователя с id: %s нет в списке бронирования")));
+                .orElseThrow(() -> new IllegalArgumentException("Пользователя с id: %s нет в списке бронирования")));
     }
 
     public BookingOuterDTO cancelBooking(int id) {
         Booking booking = bookingRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Такой брони не существует"));
+                .orElseThrow(() -> new IllegalArgumentException("Такой брони не существует"));
         booking.setStatus(Status.CANCELLED);
-        booking.setUser(null);
         return mapper.toOuterDTO(bookingRepository.saveAndFlush(booking));
     }
 }

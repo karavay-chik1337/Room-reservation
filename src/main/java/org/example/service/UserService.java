@@ -19,14 +19,14 @@ public class UserService {
 
     public UserOuterDTO create(UserInnerDTO innerDTO){
         if(userRepository.existsUserByEmail(innerDTO.email()))
-            throw new RuntimeException("Пользователь с почтой: \"%s\" уже существует".formatted(innerDTO.email()));
+            throw new IllegalArgumentException("Пользователь с почтой: \"%s\" уже существует".formatted(innerDTO.email()));
         User newUser = mapper.toEntity(innerDTO);
         return mapper.toOuterDTO(userRepository.save(newUser));
     }
 
     public UserOuterDTO findById(int id){
         return mapper.toOuterDTO(userRepository.findById(id).orElseThrow(() ->
-                new RuntimeException("Пользователя с id: %s не существует".formatted(id))));
+                new IllegalArgumentException("Пользователя с id: %s не существует".formatted(id))));
     }
 
     public List<UserOuterDTO> findAll() {
@@ -35,9 +35,9 @@ public class UserService {
 
     public UserOuterDTO update(int id, UserInnerDTO innerDTO){
         if(userRepository.existsUserByEmail(innerDTO.email()))
-            throw new RuntimeException("Пользователь с почтой: \"%s\" уже существует".formatted(innerDTO.email()));
+            throw new IllegalArgumentException("Пользователь с почтой: \"%s\" уже существует".formatted(innerDTO.email()));
         User updateUser = userRepository.findById(id).orElseThrow(() ->
-                new RuntimeException("Пользователя с id: %s не существует".formatted(id)));
+                new IllegalArgumentException("Пользователя с id: %s не существует".formatted(id)));
         mapper.updateUser(innerDTO, updateUser);
         return mapper.toOuterDTO(userRepository.save(updateUser));
     }
