@@ -4,8 +4,10 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -23,9 +25,10 @@ public class Room {
     @Column(name = "name", nullable = false, unique = true)
     private String name;
 
-    @Column(name = "location", nullable = false, unique = true)
+    @Column(name = "location", nullable = false)
     private String location;
 
-    @OneToMany(mappedBy = "room")
-    private Set<Booking> bookings;
+    @OneToMany(mappedBy = "room", cascade = CascadeType.REMOVE)
+    @Fetch(value = FetchMode.JOIN)
+    private Set<Booking> bookings = new HashSet<>();
 }
