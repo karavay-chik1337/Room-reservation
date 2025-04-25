@@ -8,9 +8,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.time.LocalDateTime;
 
 @RestControllerAdvice
-public class ExceptionAdvice {
-
-    public record ErrorResponse(String message, LocalDateTime time) {}
+public class ControllerAdvice {
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ErrorResponse> handleException(IllegalArgumentException e) {
