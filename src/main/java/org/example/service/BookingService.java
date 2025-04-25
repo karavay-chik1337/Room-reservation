@@ -81,4 +81,7 @@ public class BookingService {
         booking.setStatus(Status.CANCELLED);
         return mapper.toOuterDTO(bookingRepository.saveAndFlush(booking));
     }
+
+    // TODO сделать автоматическое изменение статуса на COMPLETED
+    //  после того, как endTime станет меньше текущего времени
 }

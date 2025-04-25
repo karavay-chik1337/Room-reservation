@@ -16,3 +16,5 @@ spring:
 logging:
   level:
     org.hibernate.orm.connections.pooling: warn
+server:
+  port: 8080
