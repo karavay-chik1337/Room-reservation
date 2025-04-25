@@ -13,3 +13,8 @@ spring:
     properties:
       hibernate:
         format_sql: true
+logging:
+  level:
+    org.hibernate.orm.connections.pooling: warn
+server:
+  port: 8080

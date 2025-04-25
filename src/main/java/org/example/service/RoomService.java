@@ -25,7 +25,7 @@ public class RoomService {
 
     public RoomOuterDTO create(RoomInnerDTO roomInnerDTO) {
         if (roomRepository.existsRoomByName(roomInnerDTO.name())){
-            throw new RuntimeException("Комната с название: \"%s\" уже существует"
+            throw new IllegalArgumentException("Комната с название: \"%s\" уже существует"
                     .formatted(roomInnerDTO.name()));
         }
         Room newRoom = mapper.toEntity(roomInnerDTO);
@@ -34,7 +34,7 @@ public class RoomService {
 
     public RoomOuterDTO findById(int id) {
         return mapper.toOuterDTO(roomRepository.findById(id).orElseThrow(() ->
-                new RuntimeException("Комнаты с id: %s не существует".formatted(id))));
+                new IllegalArgumentException("Комнаты с id: %s не существует".formatted(id))));
     }
 
     public List<RoomOuterDTO> findAllAvailable(LocalDateTime desiredTime) {
@@ -56,7 +56,7 @@ public class RoomService {
 
     public RoomOuterDTO update(int id, RoomInnerDTO innerDTO) {
         Room updateRoom = roomRepository.findById(id).orElseThrow(() ->
-                new RuntimeException("Комнаты с id: %s не существует".formatted(id)));
+                new IllegalArgumentException("Комнаты с id: %s не существует".formatted(id)));
         mapper.updateRoom(innerDTO, updateRoom);
         return mapper.toOuterDTO(roomRepository.saveAndFlush(updateRoom));
     }
