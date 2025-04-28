@@ -11,6 +11,7 @@ import org.example.mapper.BookingMapper;
 import org.example.repository.BookingRepository;
 import org.example.repository.RoomRepository;
 import org.example.repository.UserRepository;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -24,6 +25,7 @@ public class BookingService {
     private final UserRepository userRepository;
     private final RoomRepository roomRepository;
     private final BookingMapper mapper;
+    private final long DELAY_TIME = 60000;
 
     public BookingOuterDTO create(BookingInnerDTO bookingInnerDTO) {
         if (bookingRepository.existsBookingByUserId(bookingInnerDTO.userId())) {
@@ -82,6 +84,13 @@ public class BookingService {
         return mapper.toOuterDTO(bookingRepository.saveAndFlush(booking));
     }
 
-    // TODO сделать автоматическое изменение статуса на COMPLETED
-    //  после того, как endTime станет меньше текущего времени
+    @Scheduled(fixedDelay = DELAY_TIME)
+    public void completionBooking(){
+        List<Booking> bookings = bookingRepository.findAll();
+        for (Booking booking : bookings){
+            if(booking.getStatus() != Status.CANCELLED && booking.getEndTime().isBefore(LocalDateTime.now()))
+                booking.setStatus(Status.COMPLETED);
+        }
+        bookingRepository.saveAllAndFlush(bookings);
+    }
 }

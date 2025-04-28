@@ -8,11 +8,14 @@ spring:
     password: postgres
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: validate
     show-sql: true
     properties:
       hibernate:
         format_sql: true
+  docker:
+    compose:
+      enabled: false
 logging:
   level:
     org.hibernate.orm.connections.pooling: warn
