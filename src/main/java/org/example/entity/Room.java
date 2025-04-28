@@ -31,4 +31,11 @@ public class Room {
     @OneToMany(mappedBy = "room", cascade = CascadeType.REMOVE)
     @Fetch(value = FetchMode.JOIN)
     private Set<Booking> bookings = new HashSet<>();
+
+    public Room(Integer id, String name, String location, Set<Booking> bookings) {
+        this.id = id;
+        this.name = name;
+        this.location = location;
+        this.bookings = bookings;
+    }
 }
