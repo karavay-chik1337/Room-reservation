@@ -16,5 +16,5 @@ public interface RoomMapper {
     Room toEntity(RoomInnerDTO innerDTO);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    void updateRoom(RoomInnerDTO innerDTO, @MappingTarget Room room);
+    Room updateRoom(RoomInnerDTO innerDTO, @MappingTarget Room room);
 }

@@ -11,7 +11,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.verification.VerificationMode;
 
 import java.util.List;
 import java.util.Optional;
@@ -35,11 +34,13 @@ class UserServiceTest {
     UserInnerDTO innerDTO;
     User user;
     UserOuterDTO outerDTO;
+    int userId;
 
     @BeforeEach
     void setUp() {
+        userId = 1;
         innerDTO = new UserInnerDTO("dima", "karavaev", "dima@mail.ru", "финансовый");
-        user = new User(1, innerDTO.name(), innerDTO.surname(), innerDTO.email(), innerDTO.department());
+        user = new User(userId, innerDTO.name(), innerDTO.surname(), innerDTO.email(), innerDTO.department());
         outerDTO = new UserOuterDTO(user.getId(), innerDTO.name(), innerDTO.surname(), innerDTO.email(), innerDTO.department());
     }
 
@@ -51,6 +52,10 @@ class UserServiceTest {
         when(mapper.toOuterDTO(user)).thenReturn(outerDTO);
 
         assertEquals(outerDTO, userService.create(innerDTO));
+        verify(userRepository).existsUserByEmail(innerDTO.email());
+        verify(userRepository).save(any(User.class));
+        verify(mapper).toEntity(innerDTO);
+        verify(mapper).toOuterDTO(user);
         verifyNoMoreInteractions(userRepository, mapper);
     }
 
@@ -66,20 +71,22 @@ class UserServiceTest {
 
     @Test
     void findById_success() {
-        when(userRepository.findById(1)).thenReturn(Optional.of(user));
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(mapper.toOuterDTO(user)).thenReturn(outerDTO);
 
         assertEquals(outerDTO, userService.findById(1));
-        verify(userRepository).findById(1);
+        verify(userRepository).findById(userId);
+        verify(mapper).toOuterDTO(user);
         verifyNoMoreInteractions(mapper, userRepository);
     }
 
     @Test
     void findById_throwsException() {
-        when(userRepository.findById(1)).thenReturn(Optional.empty());
+        when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
         assertThrows(IllegalArgumentException.class, () -> userService.findById(1));
-        verify(userRepository).findById(1);
+        verify(userRepository).findById(userId);
+        verifyNoMoreInteractions(userRepository);
         verifyNoInteractions(mapper);
     }
 
@@ -93,24 +100,29 @@ class UserServiceTest {
         when(mapper.toOuterDTO(users)).thenReturn(userOuterDTOS);
 
         assertEquals(userOuterDTOS, userService.findAll());
+        verify(userRepository).findAll();
+        verify(mapper).toOuterDTO(users);
         verifyNoMoreInteractions(mapper, userRepository);
     }
 
     @Test
     void update_success() {
-        int id = 1;
         UserInnerDTO innerDTO = new UserInnerDTO("DIMA", null, null, null);
         UserOuterDTO outerDTO = new UserOuterDTO(user.getId(), innerDTO.name(), user.getSurname(), user.getEmail(), user.getDepartment());
         when(userRepository.existsUserByEmail(innerDTO.email())).thenReturn(false);
-        when(userRepository.findById(id)).thenReturn(Optional.of(user));
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         user.setName(innerDTO.name());
         when(mapper.updateUser(innerDTO, user)).thenReturn(user);
         when(userRepository.save(any(User.class))).thenReturn(user);
         when(mapper.toOuterDTO(user)).thenReturn(outerDTO);
 
-        assertEquals(outerDTO, userService.update(id, innerDTO));
+        assertEquals(outerDTO, userService.update(userId, innerDTO));
+        verify(userRepository).existsUserByEmail(innerDTO.email());
+        verify(userRepository).findById(userId);
+        verify(mapper).updateUser(innerDTO, user);
+        verify(userRepository).save(any(User.class));
+        verify(mapper).toOuterDTO(user);
         verifyNoMoreInteractions(userRepository, mapper);
-        //verify(mapper, )
     }
 
     @Test
@@ -118,6 +130,7 @@ class UserServiceTest {
         when(userRepository.existsUserByEmail(innerDTO.email())).thenReturn(true);
 
         assertThrows(IllegalArgumentException.class, () -> userService.update(1, innerDTO));
+        verify(userRepository).existsUserByEmail(innerDTO.email());
         verifyNoInteractions(mapper);
         verifyNoMoreInteractions(userRepository);
     }
@@ -128,8 +141,10 @@ class UserServiceTest {
         when(userRepository.findById(1)).thenReturn(Optional.empty());
 
         assertThrows(IllegalArgumentException.class, () -> userService.update(1, innerDTO));
-        verifyNoInteractions(mapper);
+        verify(userRepository).existsUserByEmail(innerDTO.email());
+        verify(userRepository).findById(1);
         verifyNoMoreInteractions(userRepository);
+        verifyNoInteractions(mapper);
     }
 
     @Test
@@ -139,5 +154,6 @@ class UserServiceTest {
         userService.deleteById(user.getId());
 
         verify(userRepository, times(1)).deleteById(user.getId());
+        verifyNoMoreInteractions(userRepository);
     }
 }

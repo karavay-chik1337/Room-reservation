@@ -181,4 +181,14 @@ class BookingServiceTest {
 
         assertEquals(cancelOuterDTO, bookingService.cancelBooking(booking.getId()));
     }
+
+    @Test
+    void deleteById(){
+        doNothing().when(bookingRepository).deleteById(bookingId);
+
+        bookingService.deleteById(bookingId);
+
+        verify(bookingRepository).deleteById(bookingId);
+    }
+
 }
