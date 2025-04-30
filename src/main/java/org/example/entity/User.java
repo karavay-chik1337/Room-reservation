@@ -1,0 +1,43 @@
+package org.example.entity;
+
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Entity
+@Table(name = "users")
+@Getter
+@Setter
+@NoArgsConstructor
+public class User {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
+    private Integer id;
+
+    @Column(name = "name", nullable = false)
+    private String name;
+
+    @Column(name = "surname", nullable = false)
+    private String surname;
+
+    @Column(name = "email", nullable = false, unique = true)
+    private String email;
+
+    @Column(name = "department", nullable = false)
+    private String department;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.REMOVE)
+    private Booking booking;
+
+    public User(Integer id, String name, String surname, String email, String department) {
+        this.id = id;
+        this.name = name;
+        this.surname = surname;
+        this.email = email;
+        this.department = department;
+        this.booking = null;
+    }
+}

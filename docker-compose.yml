@@ -1,0 +1,29 @@
+version: '3.8'
+services:
+  backend:
+    image: backend:1.0
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db/postgres
+      - SPRING_JPA_HIBERNATE_DDL-AUTO=create
+      - TZ=Europe/Moscow
+
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      TZ: Europe/Moscow
+    ports:
+      - "5433:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+volumes:
+  db-data:
