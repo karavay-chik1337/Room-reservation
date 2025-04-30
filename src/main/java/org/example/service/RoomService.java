@@ -23,12 +23,12 @@ public class RoomService {
     private final BookingRepository bookingRepository;
     private final RoomMapper mapper;
 
-    public RoomOuterDTO create(RoomInnerDTO roomInnerDTO) {
-        if (roomRepository.existsRoomByName(roomInnerDTO.name())){
+    public RoomOuterDTO create(RoomInnerDTO innerDTO) {
+        if (roomRepository.existsRoomByName(innerDTO.name())){
             throw new IllegalArgumentException("Комната с название: \"%s\" уже существует"
-                    .formatted(roomInnerDTO.name()));
+                    .formatted(innerDTO.name()));
         }
-        Room newRoom = mapper.toEntity(roomInnerDTO);
+        Room newRoom = mapper.toEntity(innerDTO);
         return mapper.toOuterDTO(roomRepository.saveAndFlush(newRoom));
     }
 
@@ -55,9 +55,13 @@ public class RoomService {
     }
 
     public RoomOuterDTO update(int id, RoomInnerDTO innerDTO) {
+        if (roomRepository.existsRoomByName(innerDTO.name())){
+            throw new IllegalArgumentException("Комната с название: \"%s\" уже существует"
+                    .formatted(innerDTO.name()));
+        }
         Room updateRoom = roomRepository.findById(id).orElseThrow(() ->
                 new IllegalArgumentException("Комнаты с id: %s не существует".formatted(id)));
-        mapper.updateRoom(innerDTO, updateRoom);
+        updateRoom = mapper.updateRoom(innerDTO, updateRoom);
         return mapper.toOuterDTO(roomRepository.saveAndFlush(updateRoom));
     }
 

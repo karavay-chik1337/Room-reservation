@@ -32,4 +32,12 @@ public class User {
     @OneToOne(mappedBy = "user", cascade = CascadeType.REMOVE)
     private Booking booking;
 
+    public User(Integer id, String name, String surname, String email, String department) {
+        this.id = id;
+        this.name = name;
+        this.surname = surname;
+        this.email = email;
+        this.department = department;
+        this.booking = null;
+    }
 }
